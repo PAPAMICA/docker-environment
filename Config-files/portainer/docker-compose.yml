@@ -1,0 +1,28 @@
+version: '2'
+  
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - proxy
+    environment:
+      - TEMPLATES="https://raw.githubusercontent.com/PAPAMICA/docker-compose-collection/master/templates-portainer.json"
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /apps/portainer/data:/data
+    labels:
+      - autoupdate=monitor
+      - traefik.enable=true
+      - traefik.http.routers.portainer.entrypoints=https
+      - traefik.http.routers.portainer.rule=Host("portainer.$NDD")
+      - traefik.http.routers.portainer.service=portainer
+      - traefik.http.services.portainer.loadbalancer.server.port=9000
+      - traefik.docker.network=proxy
+networks:
+  proxy:
+    external: true

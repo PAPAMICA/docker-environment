@@ -1,0 +1,26 @@
+http:
+  middlewares:
+    https-redirect:
+      redirectScheme:
+        scheme: https
+
+    default-headers:
+      headers:
+        frameDeny: true
+        sslRedirect: true
+        browserXssFilter: true
+        contentTypeNosniff: true
+        forceSTSHeader: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+
+    secured:
+      chain:
+        middlewares:
+        - default-headers
+
+tls:
+  options:
+    default:
+      minVersion: VersionTLS13
+      sniStrict: true

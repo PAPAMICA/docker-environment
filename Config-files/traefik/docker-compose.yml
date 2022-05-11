@@ -1,0 +1,38 @@
+version: "3.3"
+services:
+    traefik:
+        image: traefik:latest
+        container_name: traefik
+        restart: always
+        healthcheck:
+          test: grep -qr "traefik" /proc/*/status || exit 1
+          interval: 1m
+          timeout: 30s
+          retries: 3
+        ports:
+            - 80:80
+            - 443:443
+        volumes:
+            - /etc/localtime:/etc/localtime:ro
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+            - /apps/traefik/config/traefik.yml:/traefik.yml:ro
+            - /apps/traefik/config/config.yml:/config.yml:ro  
+            - /apps/traefik/config/acme.json:/acme.json
+            - /apps/traefik/config/custom:/custom:ro
+        labels:
+          # Front API
+          autoupdate: monitor
+          traefik.enable: true
+          traefik.http.routers.api.entrypoints: https
+          traefik.http.routers.api.rule: Host("traefik.$NDD")
+          traefik.http.routers.api.service: api@internal
+          traefik.http.routers.api.middlewares: auth
+          traefik.http.routers.api.middlewares: traefik-forward-auth
+          traefik.http.middlewares.auth.basicauth.users: admin:$USERPASS
+        networks:
+            - proxy
+
+networks:
+    proxy:
+        external:
+            name: proxy
