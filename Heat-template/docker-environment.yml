@@ -1,0 +1,160 @@
+heat_template_version: rocky
+description:  Docker Environment
+parameters:
+  image:
+    type: string
+    description: image use for docker
+    default: Debian 11.3 bullseye
+  key:
+    type: string
+    description: SSH key to connect to the servers
+  flavor:
+    type: string
+    description: flavor used by docker
+    default: a4-ram8-disk50-perf1
+  network:
+    type: string
+    description: network used by docker
+    default: docker-network
+  subnet_id:
+    type: string
+    description: dedicated subnet for docker
+    default: docker-subnet
+  floating_network_id:
+    type: string
+    description: UUID of a Neutron external network
+    default: ext-floating1
+  EMAIL:
+    type: string
+    description: Email for Let's Encrypt
+  NDD:
+    type: string
+    description: Domain for URL (example.com)
+
+resources:
+  wait_condition:
+    type: OS::Heat::WaitCondition
+    properties:
+      handle: { get_resource: wait_handle }
+      timeout: 600
+
+  wait_handle:
+    type: OS::Heat::WaitConditionHandle
+
+  random_password_traefik:
+    type: OS::Heat::RandomString
+    properties:
+      length: 16
+
+
+  # security group
+  docker_security_group:
+    type: OS::Neutron::SecurityGroup
+    properties:
+      name: "docker_security_group"
+      description: >
+        Allows ICMP, SSH, HTTP & HTTPS default port
+      rules:
+         - { direction: ingress, protocol: icmp }
+         - { direction: ingress, protocol: tcp, port_range_min: 22, port_range_max: 22 }
+         - { direction: ingress, protocol: tcp, port_range_min: 80, port_range_max: 80 }
+         - { direction: ingress, protocol: tcp, port_range_min: 443, port_range_max: 443 }
+
+  # network resources
+  docker_network:
+    type: OS::Neutron::Net
+    properties:
+      name: { get_param: network }
+      value_specs:
+        mtu: 1500
+
+  docker_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: 'docker-subnet'
+      network_id: { get_resource: docker_network }
+      cidr: "10.11.3.0/24"
+      dns_nameservers:
+        - "84.16.67.69"
+        - "84.16.67.70"
+      ip_version: 4
+
+  docker_router:
+    type: OS::Neutron::Router
+    properties:
+      name:  'docker-router'
+      external_gateway_info: { network: ext-floating1 }
+
+  docker_router_subnet_interface:
+    type: OS::Neutron::RouterInterface
+    properties:
+      router_id: { get_resource: docker_router }
+      subnet: { get_resource: docker_subnet }
+
+  docker_port:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: docker_network }
+      security_groups: [ { get_resource: docker_security_group } ]
+      fixed_ips:
+        - subnet_id: { get_resource: docker_subnet }
+
+  docker_floating:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network_id: { get_param: floating_network_id }
+      port_id: { get_resource: docker_port }
+
+  # instance
+  server:
+    type: OS::Nova::Server
+    depends_on: [ docker_router]
+    properties:
+      flavor: { get_param: flavor }
+      image: { get_param: image }
+      key_name: {get_param: key}
+      networks:
+        - port: { get_resource: docker_port }
+      user_data:
+        str_replace:
+          template: |
+            #!/bin/bash -v
+            export NDD=$NDD
+            export EMAIL=$EMAIL
+            export PASSWORD_TRAEFIK=$PASSWORD_TRAEFIK
+            bash -c "$(curl -s https://raw.githubusercontent.com/PAPAMICA/docker-environment/main/install-docker-environment.sh)"
+            wc_notify --data-binary '{"status": "SUCCESS"}'
+
+          params:
+            wc_notify: { get_attr: ['wait_handle', 'curl_cli'] }
+            $NDD: { get_param: NDD }
+            $EMAIL: { get_param: EMAIL }
+            $PASSWORD_TRAEFIK:  { get_attr: [random_password_traefik, value] }
+
+
+outputs:
+  traefik_url:
+    value:
+      str_replace:
+        template: https://traefik.NDD (admin / PASSWORD)
+        params:
+          NDD: { get_param: NDD }
+          PASSWORD: { get_attr: [random_password_traefik, value] }
+    description: "Traefik URL"
+
+  portainer_url:
+    value:
+      str_replace:
+        template: https://portainer.NDD
+        params:
+          NDD: { get_param: NDD }
+    description: "Portainer URL"
+
+  server_IP:
+    value:
+      str_replace:
+        template: /!\ Don't forget to redirect traefik.NDD and portainer.NDD to IP !
+        params:
+          NDD: { get_param: NDD }
+          IP: { get_attr: [docker_floating, floating_ip_address] }
+    description: "IP"
