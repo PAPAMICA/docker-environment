@@ -27,7 +27,6 @@ services:
           traefik.http.routers.api.rule: Host("traefik.$NDD")
           traefik.http.routers.api.service: api@internal
           traefik.http.routers.api.middlewares: auth
-          traefik.http.routers.api.middlewares: traefik-forward-auth
           traefik.http.middlewares.auth.basicauth.users: admin:$USERPASS
         networks:
             - proxy
