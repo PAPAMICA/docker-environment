@@ -19,6 +19,8 @@ You need to redirect this URL to server IP:
 - traefik.ndd
 - portainer.ndd
 
+---
+
 ## Deploy on Infomaniak Public Cloud (or OpenStack)
 You can use my heat template with this command:
 ```bash
