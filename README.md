@@ -88,5 +88,6 @@ Don't forget to redirect traefik.xxxxx.xxx and portainer.xxxxx.xxx to 195.15.XXX
 In this example, Traefik is accessible from : https://traefik.xxxxx.xxx with admin / xXXxxXXXxx1111XXX1 and Portainer is accessible from : https://portainer.xxxxx.xxx
 
 ## Templates for Portainer
-Feel free to use my templates and docker-compose for Portainer: https://github.com/PAPAMICA/docker-compose-collection 
+Feel free to use my templates and docker-compose for Portainer: 
+https://github.com/PAPAMICA/docker-compose-collection 
 
