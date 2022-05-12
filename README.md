@@ -7,6 +7,8 @@
 <p align="center">
   <a href="#"><img src="https://readme-typing-svg.herokuapp.com?center=true&vCenter=true&lines=Docker+environment;"></a>
 </p>
+<br />
+    Deploy a docker environment with Portainer and Traefik easily !
 
 <p align="center">
     <a href="https://github.com/PAPAMICA/docker-environment#deploy-on-debian--ubuntu"><img src="https://img.shields.io/badge/Deploy_on_Debian-%2341454A.svg?style=for-the-badge&logo=target&logoColor=white"> </a>
@@ -18,7 +20,6 @@
     <a href="https://www.debian.org/index.fr.html"><img src="https://img.shields.io/badge/Debian-%23A81D33.svg?style=for-the-badge&logo=debian&logoColor=white"> </a>
     <a href="https://www.infomaniak.com/fr/hebergement/public-cloud"><img src="https://img.shields.io/badge/Openstack-%23ED1944.svg?style=for-the-badge&logo=openstack&logoColor=white"> </a>
     <br />
-    Deploy a docker environment with Portainer and Traefik easily !
 </p>
 
 ## Deploy on Debian / Ubuntu
