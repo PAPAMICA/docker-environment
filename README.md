@@ -7,7 +7,6 @@
 <p align="center">
   <a href="#"><img src="https://readme-typing-svg.herokuapp.com?center=true&vCenter=true&lines=Docker+environment;"></a>
 </p>
-<br />
 <p align="center">
     Deploy a docker environment with Portainer and Traefik easily !
 </p>
