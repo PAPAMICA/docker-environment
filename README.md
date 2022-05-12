@@ -8,8 +8,9 @@
   <a href="#"><img src="https://readme-typing-svg.herokuapp.com?center=true&vCenter=true&lines=Docker+environment;"></a>
 </p>
 <br />
+<p align="center">
     Deploy a docker environment with Portainer and Traefik easily !
-
+</p>
 <p align="center">
     <a href="https://github.com/PAPAMICA/docker-environment#deploy-on-debian--ubuntu"><img src="https://img.shields.io/badge/Deploy_on_Debian-%2341454A.svg?style=for-the-badge&logo=target&logoColor=white"> </a>
     <a href="https://github.com/PAPAMICA/docker-environment#deploy-on-infomaniak-public-cloud-or-openstack"><img src="https://img.shields.io/badge/Deploy_on_Infomaniak_Public_cloud_(openstack)-%2341454A.svg?style=for-the-badge&logo=target&logoColor=white"> </a>
