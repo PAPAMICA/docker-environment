@@ -17,7 +17,7 @@ fi
 
 if [ -z "$NDD" ]; then
   read -p "Please provide a domain name : " NDD
-  echo -e "\nYou need to redirect this URL to server IP ($(curl ifconfig.me)):"
+  echo -e "\nYou need to redirect this URL to server IP ($(curl -s ifconfig.me)):"
   echo "   - portainer.$NDD"
   echo "   - traefik.$NDD"
   read -p "Press enter to continue"
