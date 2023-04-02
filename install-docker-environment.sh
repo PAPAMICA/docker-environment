@@ -7,15 +7,15 @@ if [ "$EUID" -ne 0 ]
 fi
 
 # Configuration
-if [ -z "EMAIL"]; then
+if [ -z "EMAIL" ]; then
   read -p "Please provide an email : " EMAIL
 fi
 
-if [ -z "PASSWORD_TRAEFIK"]; then
+if [ -z "PASSWORD_TRAEFIK" ]; then
   read -p "Please provide a password for Traefik : " PASSWORD_TRAEFIK
 fi
 
-if [ -z "NDD"]; then
+if [ -z "NDD" ]; then
   read -p "Please provide a domain name : " NDD
   echo -e "\nYou need to redirect this URL to server IP ($(curl ifconfig.me)):"
   echo "   - portainer.$NDD"
